@@ -1,88 +1,112 @@
-# GitLab Access Token Management Script
+# GitLab Access Token Manager
 
-This Python script is designed to manage GitLab access tokens. It provides functionalities to list, create, rotate, and delete access tokens for GitLab users, groups, and projects.
+This script manages GitLab access tokens, allowing you to create, delete, list, and rotate tokens for users, groups, or projects.
+
+## Features
+
+- **Create**: Create a new GitLab access token.
+- **Delete**: Delete an existing GitLab access token.
+- **List**: List all active access tokens.
+- **Rotate**: Rotate an existing GitLab access token.
 
 ## Prerequisites
 
 - Python 3.x
-- `python-gitlab` package
-- `python-dateutil` package
-- GitLab account with necessary permissions
-- `settings.py` file containing GitLab URL and personal access token
+- `python-gitlab` library
+- `python-dateutil` library
 
-### `settings.py`
+Install the required libraries using pip:
 
-Ensure you have a `settings.py` file with the following content:
-
-```python
-gitlab_url = "https://gitlab.example.com"
-gitlab_token = "your_private_token"
+```bash
+pip install python-gitlab python-dateutil
 ```
 
-## Script Usage
+## Setup
 
-### Command Line Arguments
+1. **Clone the repository**:
 
-The script accepts several command line arguments to specify the operation and parameters:
+   ```bash
+   git clone <repository_url>
+   cd <repository_directory>
+   ```
+
+2. **Create a `settings.py` file**:
+   Create a file named `settings.py` in the same directory as the script and add the following content:
+
+   ```python
+   gitlab_url = "https://gitlab.example.com"
+   gitlab_token = "your_private_token"
+   ```
+
+## Usage
+
+Run the script using the command:
+
+```bash
+python3 token_manager.py [OPTIONS]
+```
+
+### Options
+
+#### Actions (mutually exclusive):
 
 - `-c`, `--create`: Create a new GitLab access token.
 - `-d`, `--delete`: Delete an existing GitLab access token.
 - `-r`, `--rotate`: Rotate an existing GitLab access token.
-- `-e`, `--expires_at`: Specify the expiry date for the access token in `YYYY-MM-DD` format.
-- `-g`, `--group`: Specify the GitLab group ID or name.
-- `-l`, `--list`: List all active GitLab access tokens for the user/group/project.
-- `-n`, `--name`: Specify the name of the access token.
-- `-p`, `--project`: Specify the GitLab project ID or name.
-- `-s`, `--scopes`: Specify the scopes for the access token. Comma-delimited list of scopes (e.g., `api,read_user`).
-- `-t`, `--token`: Specify the GitLab access token ID or name.
-- `-u`, `--user`: Specify the GitLab user ID or name. Only useful for administrators.
+- `-l`, `--list`: List all active GitLab access tokens.
+
+#### Owners (mutually exclusive):
+
+- `-u`, `--user`: GitLab User ID or Name.
+- `-g`, `--group`: GitLab Group ID or Name.
+- `-p`, `--project`: GitLab Project ID or Name.
+
+#### Additional Options:
+
+- `-e`, `--expires_at`: Access token expiry date (format: `YYYY-MM-DD`).
+- `-n`, `--name`: Access token name.
+- `-o`, `--output`: Output file path for the access token. Use `-` or `stdout` to print to the console.
+- `-s`, `--scopes`: Comma-separated list of access token scopes (e.g., `api,read_user`).
+- `-t`, `--token`: GitLab access token ID or name.
 
 ### Examples
 
-#### Listing Access Tokens
+1. **Create a new access token**:
 
-```bash
-gitlab_token_manager -l
-```
+   ```bash
+   python3 token_manager.py --create --user <user_id> --name <token_name> --scopes "api,read_user" --expires_at "2024-12-31"
+   ```
 
-#### Creating an Access Token
+2. **Delete an access token**:
 
-```bash
-gitlab_token_manager -c -n "My Access Token" -s "api,read_user" -e "2024-12-31"
-```
+   ```bash
+   python3 token_manager.py --delete --user <user_id> --token <token_id>
+   ```
 
-#### Rotating an Access Token
+3. **List all access tokens for a user**:
 
-```bash
-gitlab_token_manager -r -t "1" -e "2024-12-31"
-```
+   ```bash
+   python3 token_manager.py --list --user <user_id>
+   ```
 
-#### Deleting an Access Token
+4. **Rotate an access token**:
 
-```bash
-gitlab_token_manager -d -t "1"
-```
+   ```bash
+   python3 token_manager.py --rotate --user <user_id> --token <token_id> --expires_at "2025-12-31"
+   ```
 
-### GitLab Initialization
+## Logging
 
-A GitLab object is initialized using the URL and token specified in the `settings.py` file.
+All actions and errors are logged to `token_manager.log` in the script directory. Check this file for detailed logs and error messages.
 
-### Functions
+## License
 
-- `list_access_tokens(token_owner, token_type="personal")`: Lists active access tokens for the specified owner.
-- `get_access_token(token, token_owner, token_type="personal")`: Retrieves a specific access token based on ID or name.
-- `rotate_access_token(token, expires_at=None)`: Rotates an access token and optionally updates its expiry date.
-- `create_access_token(token_name, token_scopes, token_owner, expires_at, token_type="personal")`: Creates a new access token with specified name, scopes, and expiry date.
-- `delete_access_token(token)`: Deletes the specified access token.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-### Main Execution
+## Acknowledgements
 
-The script performs the following steps based on the provided arguments:
+This script uses the `python-gitlab` library to interact with the GitLab API. For more information, visit the [python-gitlab documentation](https://python-gitlab.readthedocs.io/).
 
-1. Determines the token owner (user, group, or project).
-2. Validates the expiry date format if provided.
-3. Lists access tokens if `--list` is specified.
-4. Gets details of a specific access token if `--token` is specified.
-5. Rotates an access token if `--rotate` is specified.
-6. Creates a new access token if `--create` is specified.
-7. Deletes an access token if `--delete` is specified.
+---
+
+Feel free to reach out if you encounter any issues or have suggestions for improvements. Happy token managing!
